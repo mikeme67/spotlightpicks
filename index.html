@@ -4,9 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotlight Picks</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #0077cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin: 0;
+        }
+        main {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .product {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .product img {
+            width: 150px;
+            border-radius: 8px;
+        }
+        .product h2 {
+            margin: 0 0 10px 0;
+        }
+        .product p {
+            margin: 0 0 10px 0;
+        }
+        .buy-link {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #0077cc;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .buy-link:hover {
+            background-color: #005fa3;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #eee;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Spotlight Picks!</h1>
-    <p>This is your homepage. Your website is live and working.</p>
+    <header>
+        <h1>Spotlight Picks</h1>
+        <p>Your guide to the best products around</p>
+    </header>
+    <main>
+        <div class="product">
+            <img src="https://via.placeholder.com/150" alt="Product 1">
+            <div>
+                <h2>Product 1</h2>
+                <p>This is a short review of Product 1. It's high quality and affordable.</p>
+                <a href="#" class="buy-link">Buy Now</a>
+            </div>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/150" alt="Product 2">
+            <div>
+                <h2>Product 2</h2>
+                <p>This is a short review of Product 2. Customers love its features and design.</p>
+                <a href="#" class="buy-link">Buy Now</a>
+            </div>
+        </div>
+
+        <div class="product">
+            <img src="https://via.placeholder.com/150" alt="Product 3">
+            <div>
+                <h2>Product 3</h2>
+                <p>This is a short review of Product 3. A great choice for anyone looking for quality.</p>
+                <a href="#" class="buy-link">Buy Now</a>
+            </div>
+        </div>
+    </main>
+    <footer>
+        &copy; 2025 Spotlight Picks
+    </footer>
 </body>
 </html>
+
