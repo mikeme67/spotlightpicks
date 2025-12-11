@@ -1,77 +1,15 @@
-<script>
-// Utility functions
-function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
-function updateProfileButtons(topId,bottomId){
-  const user = localStorage.getItem('userName');
-  [topId,bottomId].forEach(id=>{
-    const btn=document.getElementById(id);
-    if(btn) btn.onclick = ()=>location.href = user?'profile.html':'signin.html';
-  });
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotlight Picks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Welcome to Spotlight Picks!</h1>
+    <p>Your content will go here.</p>
 
-// Render products with animations
-function renderCategories(filter='', highlightId=''){
-  const products = loadProducts();
-  const categories = ['hoodies','shirts','pants'];
-  const container = document.getElementById('categoriesContainer');
-  container.innerHTML='';
-
-  categories.forEach(cat=>{
-    const filtered = products.filter(p=>p.category===cat && p.name.toLowerCase().includes(filter.toLowerCase()));
-    if(filtered.length===0) return;
-
-    const section = document.createElement('div'); 
-    section.className='category-section';
-    section.innerHTML=`<div class="category-title">${cat.charAt(0).toUpperCase()+cat.slice(1)}</div>`;
-    
-    const row = document.createElement('div'); row.className='products-row';
-    
-    filtered.forEach((p,i)=>{
-      const card = document.createElement('div'); card.className='product-card';
-      card.style.opacity=0;
-      card.style.transform='translateY(20px)';
-      card.innerHTML=`<img src="${p.images[0]||'https://via.placeholder.com/150'}" alt="${p.name}">
-        <div class="product-name">${p.name}</div>
-        <div class="product-price">${p.price||''}</div>`;
-      card.onclick=()=>location.href=`product.html?id=${p.id}`;
-
-      // Add hover zoom
-      const img = card.querySelector('img');
-      img.style.transition = 'transform 0.3s';
-      card.addEventListener('mouseenter', ()=>img.style.transform='scale(1.05)');
-      card.addEventListener('mouseleave', ()=>img.style.transform='scale(1)');
-
-      row.appendChild(card);
-
-      // Animate card
-      setTimeout(()=>{
-        card.style.transition='0.5s ease-out';
-        card.style.opacity=1;
-        card.style.transform='translateY(0)';
-
-        // Highlight newly added product
-        if(highlightId && p.id === highlightId){
-          card.style.boxShadow='0 0 20px 3px rgba(255,74,158,0.7)';
-          setTimeout(()=>{card.style.boxShadow='0 8px 20px rgba(0,0,0,0.2)';},2000);
-        }
-      }, i*100);
-    });
-
-    section.appendChild(row); container.appendChild(section);
-    setTimeout(()=>section.classList.add('visible'), 50);
-  });
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-  updateProfileButtons('topProfileBtn','bottomProfileBtn');
-
-  // Check if URL has a newProduct query for highlighting
-  const params = new URLSearchParams(window.location.search);
-  const newProductId = params.get('newProduct');
-  renderCategories('', newProductId);
-
-  document.getElementById('searchInput').addEventListener('input',(e)=>{
-    renderCategories(e.target.value);
-  });
-});
-</script>
+    <script src="app.js"></script>
+</body>
+</html>
