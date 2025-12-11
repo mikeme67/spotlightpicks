@@ -8,29 +8,30 @@
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <style>
 body { margin:0; font-family: 'Segoe UI', sans-serif; background:#ffe0f0; color:#333; }
-.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); z-index:100; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
 .logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; }
-.search-input { padding:6px 10px; border-radius:8px; border:1px solid #ccc; background:rgba(255,255,255,0.7); width:150px; transition:0.2s; }
+.search-input { padding:6px 10px; border-radius:12px; border:1px solid #ccc; background:rgba(255,255,255,0.7); width:150px; transition:0.3s; }
 .search-input:focus { outline:none; width:250px; background:rgba(255,255,255,0.9); }
 .profile-icon { width:36px; height:36px; background:#ff4a9e; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; margin-right:10px; }
 
-.category-section { margin:20px; }
+.category-section { margin:20px; opacity:0; transform:translateY(20px); transition:0.6s ease-out; }
+.category-section.visible { opacity:1; transform:translateY(0); }
 .category-title { font-size:1.4em; font-weight:bold; margin-bottom:10px; }
-.products-row { display:flex; overflow-x:auto; gap:12px; padding-bottom:10px; scroll-behavior:smooth; }
+.products-row { display:flex; overflow-x:auto; gap:16px; padding-bottom:10px; scroll-behavior:smooth; }
 .products-row::-webkit-scrollbar { height:6px; }
 .products-row::-webkit-scrollbar-thumb { background:#ff4a9e; border-radius:3px; }
 
-.product-card { min-width:160px; background:white; border-radius:12px; padding:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:0.3s; cursor:pointer; flex-shrink:0; }
-.product-card:hover { transform:translateY(-6px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
-.product-card img { width:100%; border-radius:8px; }
+.product-card { min-width:160px; background:white; border-radius:16px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:0.3s; cursor:pointer; flex-shrink:0; }
+.product-card:hover { transform:translateY(-8px); box-shadow:0 12px 24px rgba(0,0,0,0.2); }
+.product-card img { width:100%; border-radius:12px; }
 .product-name { font-weight:bold; margin-top:6px; font-size:1em; }
 .product-price { color:#ff4a9e; font-weight:bold; margin-top:4px; }
 
-.bottom-nav { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:30px; background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); padding:10px 30px; border-radius:30px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+.bottom-nav { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:30px; background:rgba(255,255,255,0.6); backdrop-filter:blur(12px); padding:10px 30px; border-radius:30px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
 .bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; font-size:0.85em; color:#333; cursor:pointer; transition:0.2s; }
 .bottom-nav button.active { color:#ff4a9e; }
 .bottom-nav i { font-size:1.2em; margin-bottom:4px; }
-@media(max-width:600px){ .products-row { gap:8px; } .product-card { min-width:140px; } }
+@media(max-width:600px){ .products-row { gap:12px; } .product-card { min-width:140px; } }
 </style>
 </head>
 <body>
@@ -51,9 +52,8 @@ body { margin:0; font-family: 'Segoe UI', sans-serif; background:#ffe0f0; color:
   <button id="bottomProfileBtn" onclick="location.href='profile.html'"><i class="fas fa-user"></i>Profile</button>
 </div>
 
-<script src="app.js"></script>
 <script>
-// Utility functions for products
+// Utility functions
 function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
 function updateProfileButtons(topId,bottomId){
   const user = localStorage.getItem('userName');
@@ -85,6 +85,8 @@ function renderCategories(filter=''){
       row.appendChild(card);
     });
     section.appendChild(row); container.appendChild(section);
+    // Animate row fade-in
+    setTimeout(()=>section.classList.add('visible'),100);
   });
 }
 
