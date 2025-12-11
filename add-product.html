@@ -5,71 +5,97 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Add Product - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+  .container { max-width: 600px; margin: 50px auto; background: #fff9f9; padding: 20px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+  input, textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 12px; }
+  .btn-small { padding: 10px 16px; border: none; border-radius: 6px; background: #ff7bb0; color: white; cursor: pointer; transition: 0.2s; }
+  .btn-small:hover { background: #ff5a8c; }
+  label { font-weight: bold; }
+  .auto-status { font-size: 0.9em; color: gray; margin-bottom: 10px; }
+</style>
 </head>
 <body>
-<div class="header">
-  <div class="brand-left">
-    <div class="profile-icon" id="topProfileBtn">P</div>
-    <div class="logo">Spotlight Picks</div>
-  </div>
-</div>
 
-<div class="container wrap">
+<div class="container">
   <h2>Add a New Product</h2>
+  
+  <label>Product Link (paste URL first)</label>
+  <input type="url" id="productLink" placeholder="https://...">
+  <div class="auto-status" id="autoStatus">Leave blank to enter manually</div>
+  
   <form id="addProductForm">
-    <label>Product Name</label><br>
-    <input type="text" id="name" required><br><br>
+    <label>Product Name</label>
+    <input type="text" id="name" required>
     
-    <label>Category (hoodies, shirts, pants)</label><br>
-    <input type="text" id="category" required><br><br>
+    <label>Category (hoodies, shirts, pants)</label>
+    <input type="text" id="category" required>
     
-    <label>Price</label><br>
-    <input type="text" id="price"><br><br>
+    <label>Price</label>
+    <input type="text" id="price">
     
-    <label>Image URL</label><br>
-    <input type="text" id="image"><br><br>
+    <label>Image URL</label>
+    <input type="text" id="image">
     
-    <label>Product Link</label><br>
-    <input type="text" id="link"><br><br>
-    
-    <label>Description</label><br>
-    <textarea id="description"></textarea><br><br>
+    <label>Description</label>
+    <textarea id="description"></textarea>
     
     <button type="submit" class="btn-small">Add Product</button>
   </form>
 </div>
 
-<div class="bottom-nav">
-  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
-  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
-</div>
-
-<script src="app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
-  updateProfileButtons('topProfileBtn','bottomProfileBtn');
 
+  const linkInput = document.getElementById('productLink');
+  const status = document.getElementById('autoStatus');
+
+  // Try to auto-fill product info
+  linkInput.addEventListener('change', async ()=>{
+    const url = linkInput.value.trim();
+    if(!url) return;
+
+    status.textContent = 'Trying to fetch product info...';
+    try {
+      // Simple metadata fetch via a CORS-friendly API
+      const res = await fetch(`https://api.linkpreview.net/?key=YOUR_API_KEY&q=${encodeURIComponent(url)}`);
+      const data = await res.json();
+
+      if(data.title) document.getElementById('name').value = data.title;
+      if(data.description) document.getElementById('description').value = data.description;
+      if(data.image) document.getElementById('image').value = data.image;
+
+      status.textContent = 'Auto-fill successful! Edit any fields if needed.';
+    } catch(e){
+      console.log(e);
+      status.textContent = 'Auto-fill failed for this site. Please enter details manually.';
+    }
+  });
+
+  // Add product to local storage (or later JSON backend)
   const form = document.getElementById('addProductForm');
   form.addEventListener('submit', e=>{
     e.preventDefault();
-    const newProduct={
+    const newProduct = {
       id:'p_'+Date.now(),
       name:document.getElementById('name').value,
       category:document.getElementById('category').value,
       price:document.getElementById('price').value,
       images:[document.getElementById('image').value],
-      link:document.getElementById('link').value,
+      link:linkInput.value || '#',
       description:document.getElementById('description').value,
       reviews:[]
     };
-    const products = loadLocalProducts();
+
+    const products = JSON.parse(localStorage.getItem('products')||'[]');
     products.push(newProduct);
-    saveLocalProducts(products);
+    localStorage.setItem('products', JSON.stringify(products));
     alert('Product added!');
-    form.reset();
+    form.reset(); linkInput.value = ''; status.textContent = 'Leave blank to enter manually';
   });
+
 });
 </script>
+
 </body>
 </html>
