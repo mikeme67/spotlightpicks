@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Product Details - Spotlight Picks</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="header">
+  <div class="brand-left">
+    <div class="profile-icon" id="topProfileBtn">P</div>
+    <div class="logo">Spotlight Picks</div>
+  </div>
+  <input id="searchInput" class="search-input" placeholder="Search products...">
+</div>
+
+<div class="container wrap" id="productContainer"></div>
+
+<div class="bottom-nav" id="bottomNav">
+  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
+  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+</div>
+
+<script src="app.js"></script>
+<script>
+function getQueryParam(param){ return new URLSearchParams(window.location.search).get(param) }
+document.addEventListener('DOMContentLoaded', async ()=>{
+  updateProfileButtons('topProfileBtn','bottomProfileBtn');
+  const id = getQueryParam('id'); if(!id) return;
+  const products = await getAllProducts();
+  const product = products.find(p=>p.id===id); if(!product) return;
+
+  const container = document.getElementById('productContainer');
+  container.innerHTML = `
+    <div class="viewer">
+      <img src="${product.images[0]||'https://via.placeholder.com/600'}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <div class="price">${product.price||''}</div>
+      <a class="btn-small" href="${product.link||'#'}" target="_blank" style="margin-top:8px">Buy Now</a>
+      <p style="margin-top:8px">${product.description||''}</p>
+    </div>
+    <div class="reviews">
+      <h3>Reviews:</h3>
+      <ul>${(product.reviews||[]).map(r=>`<li>${r}</li>`).join('')||'<li>No reviews yet.</li>'}</ul>
+    </div>`;
+  
+  setupSearch();
+});
+</script>
+</body>
+</html>
