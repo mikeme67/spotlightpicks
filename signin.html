@@ -1,90 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Sign In - Spotlight Picks</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-body { font-family:'Inter',sans-serif; background:#ffc0cb; margin:0; display:flex; flex-direction:column; align-items:center; padding-top:60px; padding-bottom:70px; }
-header { display:flex; align-items:center; justify-content:space-between; width:100%; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); z-index:50; border-bottom:1px solid rgba(0,0,0,0.1); }
-header h1 { font-size:20px; font-weight:700; color:#111; text-align:center; flex:1; }
-.profile-icon { width:35px; height:35px; border-radius:50%; background:#00bfff; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; transition:0.2s; }
-.profile-icon:hover { background:#0099cc; }
-
-.container { background:white; padding:25px; border-radius:16px; box-shadow:0 4px 15px rgba(0,0,0,0.1); width:300px; text-align:center; }
-input { width:100%; padding:8px; margin-bottom:12px; border-radius:8px; border:1px solid #ccc; }
-button { width:100%; padding:8px; background:#00bfff; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer; transition:0.2s; }
-button:hover { background:#0099cc; }
-a { display:block; margin-top:12px; color:#00bfff; text-decoration:none; font-size:14px; }
-
-.bottom-nav {position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; padding:12px 0; z-index:100;
-  border-top-left-radius:16px; border-top-right-radius:16px; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 -4px 15px rgba(0,0,0,0.2);}
-.bottom-nav button { background:rgba(255,255,255,0.1); border:none; color:white; font-size:16px; font-weight:500; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:6px 10px; border-radius:12px; transition:background 0.3s,color 0.3s;}
-.bottom-nav button i { font-size:18px; margin-bottom:3px; }
-.bottom-nav button.active { background:rgba(255,255,255,0.3); color:#00bfff; }
-
-@media(max-width:600px){ .bottom-nav button{font-size:14px;} .bottom-nav button i{font-size:16px;} }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header>
-  <div class="profile-icon" id="topProfileBtn">P</div>
-  <h1>Spotlight Picks</h1>
-  <div style="width:35px;"></div>
-</header>
-
-<div class="container">
-<h2>Sign In</h2>
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
-<button id="signinBtn">Sign In</button>
-<a href="signup.html">Don't have an account? Sign Up</a>
+<div class="header">
+  <div class="brand-left">
+    <div class="logo">Spotlight Picks</div>
+  </div>
 </div>
 
-<div class="bottom-nav">
-  <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i>Home</button>
-  <button onclick="window.location.href='activity.html'"><i class="fas fa-list"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user"></i>Profile</button>
+<div class="container wrap">
+  <h2>Sign In</h2>
+  <form id="signinForm">
+    <label>Username</label><br>
+    <input type="text" id="username" required><br><br>
+    <label>Password</label><br>
+    <input type="password" id="password" required><br><br>
+    <button type="submit" class="btn-small">Sign In</button>
+  </form>
+  <p style="margin-top:12px">Don't have an account? <a href="#" id="createAccount">Create one</a></p>
 </div>
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
-// Top Profile Icon
-const topProfileBtn = document.getElementById('topProfileBtn');
-topProfileBtn.onclick = () => {
-  const user = localStorage.getItem('userName');
-  if(user){ window.location.href='profile.html'; } 
-  else{ window.location.href='signin.html'; }
-};
-
-// Sign in logic
-document.getElementById('signinBtn').onclick = () => {
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const users = JSON.parse(localStorage.getItem('users'))||{};
-  if(users[email] && users[email].password===password){
-    localStorage.setItem('userName', users[email].name);
-    window.location.href='profile.html';
-  } else { alert('Invalid credentials'); }
-};
-
-// Bottom profile button
-const bottomProfileBtn = document.getElementById('bottomProfileBtn');
-function updateProfile(){
-  const user = localStorage.getItem('userName');
-  if(user){ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>${user}`; bottomProfileBtn.onclick=()=>window.location.href='profile.html'; }
-  else{ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>Profile`; bottomProfileBtn.onclick=()=>window.location.href='signin.html'; }
-}
-updateProfile();
-
-// Highlight active nav
-const navButtons = document.querySelectorAll('.bottom-nav button');
-const currentPage = window.location.pathname.split("/").pop();
-navButtons.forEach(btn=>{
-  const href = btn.onclick?.toString().match(/'(.*?)'/)?.[1];
-  if(href && href===currentPage) btn.classList.add('active');
+document.addEventListener('DOMContentLoaded', ()=>{
+  const form=document.getElementById('signinForm');
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const user=document.getElementById('username').value;
+    localStorage.setItem('userName', user);
+    alert('Signed in as '+user);
+    location.href='profile.html';
+  });
+  document.getElementById('createAccount').addEventListener('click', e=>{
+    e.preventDefault();
+    const user=prompt('Choose a username:');
+    if(user){ localStorage.setItem('userName', user); alert('Account created!'); location.href='profile.html'; }
+  });
 });
 </script>
 </body>
