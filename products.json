@@ -1,6 +1,10 @@
 {
-  "products":[
-    {"id":"p_001","name":"Example Hoodie","category":"hoodies","price":"$39.99","images":["https://via.placeholder.com/800x800?text=Hoodie+1"],"link":"https://example.com/hoodie","description":"A cozy hoodie for everyday wear.","reviews":["Great fit!","Very warm"]},
-    {"id":"p_002","name":"Classic T-Shirt","category":"shirts","price":"$19.99","images":["https://via.placeholder.com/800x800?text=Shirt+1"],"link":"https://example.com/shirt","description":"Soft cotton tee.","reviews":[]}
-  ]
+  "id": "p_003",
+  "name": "New Hoodie",
+  "category": "hoodies",
+  "price": "$49.99",
+  "images": ["https://example.com/hoodie1.jpg"],
+  "link": "https://example.com/buy-hoodie",
+  "description": "Soft, cozy hoodie.",
+  "reviews": ["Love it!", "Fits perfectly!"]
 }
