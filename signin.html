@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sign In - Spotlight Picks</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Sign In - Spotlight Picks</title><link rel="stylesheet" href="style.css"></head>
 <body>
-<div class="header">
-  <div class="brand-left">
-    <div class="logo">Spotlight Picks</div>
+<div class="header"><div class="brand-left"><div class="logo">Spotlight Picks</div></div></div>
+<div class="container-card" style="max-width:460px;margin:36px auto;padding:20px">
+  <h2 style="margin:0 0 12px 0">Sign In / Create Account</h2>
+  <label>Username (or display name)</label>
+  <input id="user" placeholder="Your name" style="padding:10px;border-radius:8px;border:1px solid #eee;margin-top:6px">
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button id="signinBtn" class="btn" style="flex:1">Sign In</button>
+    <button id="createBtn" class="btn" style="flex:1;background:#fff;color:var(--accent);border:1px solid rgba(0,0,0,0.06)">Create</button>
   </div>
 </div>
-
-<div class="container wrap">
-  <h2>Sign In</h2>
-  <form id="signinForm">
-    <label>Username</label><br>
-    <input type="text" id="username" required><br><br>
-    <label>Password</label><br>
-    <input type="password" id="password" required><br><br>
-    <button type="submit" class="btn-small">Sign In</button>
-  </form>
-  <p style="margin-top:12px">Don't have an account? <a href="#" id="createAccount">Create one</a></p>
-</div>
-
+<script src="app.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
-  const form=document.getElementById('signinForm');
-  form.addEventListener('submit', e=>{
-    e.preventDefault();
-    const user=document.getElementById('username').value;
-    localStorage.setItem('userName', user);
-    alert('Signed in as '+user);
+  document.getElementById('signinBtn').onclick = ()=>{
+    const u = document.getElementById('user').value.trim();
+    if(!u) return alert('Enter a name');
+    localStorage.setItem('userName', u);
     location.href='profile.html';
-  });
-  document.getElementById('createAccount').addEventListener('click', e=>{
-    e.preventDefault();
-    const user=prompt('Choose a username:');
-    if(user){ localStorage.setItem('userName', user); alert('Account created!'); location.href='profile.html'; }
-  });
+  };
+  document.getElementById('createBtn').onclick = ()=>{
+    const u = document.getElementById('user').value.trim();
+    if(!u) return alert('Enter a name');
+    // simple client-side "account" (stored in users object)
+    const users = JSON.parse(localStorage.getItem('users')||'{}');
+    users[u] = {name: u, created: Date.now()};
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('userName', u);
+    location.href='profile.html';
+  };
 });
 </script>
 </body>
