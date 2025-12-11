@@ -1,75 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Product - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<style>
-body { margin:0; font-family:'Segoe UI',sans-serif; background:#ffe0f0; color:#333; }
-.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; }
-.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
-.profile-icon { width:36px; height:36px; background:#ff4a9e; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; margin-left:10px; }
-.container { max-width:700px; margin:20px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 6px 20px rgba(0,0,0,0.1); }
-.product-img { width:100%; border-radius:16px; margin-bottom:16px; }
-.product-name { font-size:1.6em; font-weight:bold; margin-bottom:6px; }
-.product-price { font-size:1.3em; color:#ff4a9e; font-weight:bold; margin-bottom:10px; }
-.product-description { margin-bottom:16px; line-height:1.4; }
-.buy-btn { display:inline-block; background:#ff4a9e; color:white; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition:0.2s; text-decoration:none; }
-.buy-btn:hover { background:#ff5a8c; }
-.reviews { margin-top:20px; }
-.review { background:#ffe6f0; padding:10px; border-radius:12px; margin-bottom:10px; }
-.reviews h3 { margin-bottom:10px; }
-@media(max-width:600px){ .container { margin:10px; padding:16px; } }
-</style>
 </head>
 <body>
-
 <div class="header">
-  <div style="display:flex; align-items:center;">
+  <div class="brand-left">
+    <div class="profile-icon" id="topProfileBtn">P</div>
     <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
-    <div class="profile-icon" id="profileBtn">P</div>
   </div>
+  <input id="searchInput" class="search-input" placeholder="Search...">
 </div>
 
-<div class="container" id="productContainer"></div>
+<div class="wrap container-card" id="productWrapper"></div>
 
+<div class="bottom-nav">
+  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
+  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+</div>
+
+<script src="app.js"></script>
 <script>
-function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
-function updateProfileButton(){ 
-  const user = localStorage.getItem('userName');
-  const btn = document.getElementById('profileBtn');
-  btn.onclick = ()=> location.href = user ? 'profile.html':'signin.html';
-}
+function q(name){ return new URL(location.href).searchParams.get(name) }
+async function loadAndRender(){
+  app.updateProfileButtons('topProfileBtn','bottomProfileBtn');
+  app.setupSearch();
+  const id = q('id') || q('temp');
+  const p = id ? await app.renderProductPage(id) : null;
+  const wrap = document.getElementById('productWrapper');
+  if(!p){ wrap.innerHTML = '<div style="padding:30px;text-align:center">Product not found. <a href="index.html">Back</a></div>'; return; }
 
-function renderProduct(){
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if(!id) return;
-
-  const products = loadProducts();
-  const p = products.find(prod=>prod.id===id);
-  const container = document.getElementById('productContainer');
-  if(!p) return container.innerHTML='Product not found';
-
-  container.innerHTML=`
-    <img class="product-img" src="${p.images[0]||'https://via.placeholder.com/300'}" alt="${p.name}">
-    <div class="product-name">${p.name}</div>
-    <div class="product-price">${p.price||''}</div>
-    <div class="product-description">${p.description||'No description available.'}</div>
-    <a class="buy-btn" href="${p.link||'#'}" target="_blank">Buy Now</a>
-    <div class="reviews">
-      <h3>Reviews</h3>
-      ${p.reviews && p.reviews.length>0 ? p.reviews.map(r=>`<div class="review">${r}</div>`).join('') : '<div class="review">No reviews yet.</div>'}
+  // product layout
+  wrap.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr;gap:12px">
+      <div class="viewer"><img id="mainImg" src="${app.escapeHtml(p.images[0]||'https://via.placeholder.com/800')}" alt=""></div>
+      <div class="meta">
+        <h2 style="margin:0">${app.escapeHtml(p.name)}</h2>
+        <div style="margin-top:8px" class="price">${app.escapeHtml(p.price||'')}</div>
+        <a class="btn-small" href="${app.escapeHtml(p.link||'#')}" target="_blank" style="margin-top:12px;display:inline-block">Buy from store</a>
+        <div style="margin-top:12px">${app.escapeHtml(p.description||'')}</div>
+      </div>
+      <div class="reviews">
+        <h3>Reviews</h3>
+        <div id="reviewsList"></div>
+        <div style="margin-top:12px">
+          <input id="revName" placeholder="Your name" style="padding:8px;border-radius:8px;border:1px solid #eee;width:100%;margin-bottom:8px">
+          <textarea id="revText" placeholder="Write your review" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee"></textarea>
+          <button id="addReviewBtn" class="btn-small" style="background:var(--accent);color:#fff;margin-top:8px">Add Review</button>
+        </div>
+      </div>
     </div>
   `;
-}
 
-document.addEventListener('DOMContentLoaded',()=>{
-  updateProfileButton();
-  renderProduct();
-});
+  // reviews stored per product id
+  const key = 'reviews_' + p.id;
+  let stored = JSON.parse(localStorage.getItem(key) || '[]');
+  if((p.reviews||[]).length && stored.length===0){
+    stored = (p.reviews||[]).map(r=>({name:'User',text:r,ts:Date.now()}));
+    localStorage.setItem(key, JSON.stringify(stored));
+  }
+  function renderReviews(){
+    const list = JSON.parse(localStorage.getItem(key) || '[]');
+    const out = document.getElementById('reviewsList');
+    out.innerHTML = list.length ? list.map(r=>`<div style="border-top:1px solid #f4d7e4;padding:8px 0"><strong>${app.escapeHtml(r.name)}</strong><div style="font-size:13px;color:#333">${app.escapeHtml(r.text)}</div></div>`).join('') : '<div style="color:#666">No reviews yet</div>';
+  }
+  renderReviews();
+  document.getElementById('addReviewBtn').onclick = ()=>{
+    const nm = document.getElementById('revName').value.trim() || 'Anonymous';
+    const txt = document.getElementById('revText').value.trim();
+    if(!txt) return alert('Write a review first');
+    const arr = JSON.parse(localStorage.getItem(key) || '[]');
+    arr.unshift({name:nm,text:txt,ts:Date.now()});
+    localStorage.setItem(key, JSON.stringify(arr));
+    document.getElementById('revName').value=''; document.getElementById('revText').value='';
+    renderReviews();
+  };
+}
+document.addEventListener('DOMContentLoaded', loadAndRender);
 </script>
 </body>
 </html>
