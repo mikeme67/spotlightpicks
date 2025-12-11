@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Profile - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+body { margin:0; font-family:'Segoe UI',sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; }
+.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
+.container { max-width:500px; margin:30px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); animation:fadeIn 0.6s ease-out; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+.btn { padding:12px 20px; border:none; border-radius:12px; background:#ff4a9e; color:white; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; margin-top:12px; }
+.btn:hover { background:#ff1f78; }
+</style>
 </head>
 <body>
+
 <div class="header">
-  <div class="brand-left">
-    <div class="profile-icon" id="topProfileBtn">P</div>
-    <div class="logo">Spotlight Picks</div>
-  </div>
+  <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
 </div>
 
-<div class="container wrap">
-  <h2>Your Profile</h2>
-  <p id="welcomeMsg"></p>
-  <button class="btn-small" id="logoutBtn">Log Out</button>
-</div>
-
-<div class="bottom-nav">
-  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
-  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+<div class="container" id="profileContainer">
+  <h2 style="text-align:center;">Profile</h2>
+  <p id="usernameDisplay"></p>
+  <button class="btn" id="logoutBtn">Log Out</button>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', ()=>{
-  const user=localStorage.getItem('userName');
-  if(!user){ location.href='signin.html'; return; }
-  document.getElementById('welcomeMsg').innerText='Welcome, '+user+'!';
+  const username = localStorage.getItem('userName');
+  const container = document.getElementById('profileContainer');
+
+  if(!username){
+    alert('You are not signed in.');
+    window.location.href='signin.html';
+  } else {
+    document.getElementById('usernameDisplay').textContent = "Username: " + username;
+  }
+
   document.getElementById('logoutBtn').addEventListener('click', ()=>{
     localStorage.removeItem('userName');
-    alert('Logged out');
-    location.href='signin.html';
+    window.location.href='signin.html';
   });
 });
 </script>
+
 </body>
 </html>
