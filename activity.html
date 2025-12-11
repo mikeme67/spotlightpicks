@@ -1,40 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Activity - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+body { margin:0; font-family:'Segoe UI',sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; }
+.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
+.container { max-width:600px; margin:20px auto; padding:20px; }
+.activity-item { background:white; border-radius:16px; padding:12px; margin-bottom:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); opacity:0; transform:translateY(20px); transition:0.5s ease-out; }
+.activity-item.visible { opacity:1; transform:translateY(0); }
+.activity-item h3 { margin-bottom:6px; }
+.activity-item p { font-size:0.95em; color:#555; }
+</style>
 </head>
 <body>
+
 <div class="header">
-  <div class="brand-left">
-    <div class="profile-icon" id="topProfileBtn">P</div>
-    <div class="logo">Spotlight Picks</div>
-  </div>
+  <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
 </div>
 
-<div class="container wrap">
-  <h2>Your Activity</h2>
-  <p>Favorites and recently viewed products will appear here.</p>
-  <ul id="favoritesList"></ul>
+<div class="container" id="activityContainer">
+  <!-- Activity items will appear here -->
 </div>
 
-<div class="bottom-nav">
-  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
-  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
-</div>
-
-<script src="app.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', async ()=>{
-  updateProfileButtons('topProfileBtn','bottomProfileBtn');
-  const favs = JSON.parse(localStorage.getItem('favorites')||'[]');
-  const ul = document.getElementById('favoritesList');
-  if(favs.length===0) ul.innerHTML='<li>No favorites yet</li>';
-  else ul.innerHTML = favs.map(f=>`<li>${f}</li>`).join('');
+document.addEventListener('DOMContentLoaded', ()=>{
+  const user = localStorage.getItem('userName');
+  const container = document.getElementById('activityContainer');
+
+  if(!user){
+    container.innerHTML = `<p style="text-align:center;">Sign in to see your activity.</p>`;
+    return;
+  }
+
+  // Example: recently added products by this user (we can extend to favorites later)
+  const products = JSON.parse(localStorage.getItem('products')||'[]');
+  if(products.length === 0){
+    container.innerHTML = `<p style="text-align:center;">No activity yet.</p>`;
+    return;
+  }
+
+  products.reverse().forEach((p,i)=>{
+    const item = document.createElement('div'); 
+    item.className='activity-item';
+    item.innerHTML = `<h3>${p.name}</h3><p>Category: ${p.category} | Price: ${p.price || 'N/A'}</p>`;
+    container.appendChild(item);
+
+    // Animate item
+    setTimeout(()=>item.classList.add('visible'), i*150);
+  });
 });
 </script>
+
 </body>
 </html>
