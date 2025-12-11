@@ -1,54 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Product Details - Spotlight Picks</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+body { margin:0; font-family:'Segoe UI', sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
+.profile-icon { width:36px; height:36px; background:#ff4a9e; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; margin-left:10px; }
+
+.container { max-width:700px; margin:20px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 6px 20px rgba(0,0,0,0.1); }
+.product-img { width:100%; border-radius:16px; margin-bottom:16px; }
+.product-name { font-size:1.6em; font-weight:bold; margin-bottom:6px; }
+.product-price { font-size:1.3em; color:#ff4a9e; font-weight:bold; margin-bottom:10px; }
+.product-description { margin-bottom:16px; line-height:1.4; }
+.buy-btn { display:inline-block; background:#ff4a9e; color:white; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition:0.2s; text-decoration:none; }
+.buy-btn:hover { background:#ff5a8c; }
+.reviews { margin-top:20px; }
+.review { background:#ffe6f0; padding:10px; border-radius:12px; margin-bottom:10px; }
+.reviews h3 { margin-bottom:10px; }
+@media(max-width:600px){ .container { margin:10px; padding:16px; } }
+</style>
 </head>
 <body>
+
 <div class="header">
-  <div class="brand-left">
-    <div class="profile-icon" id="topProfileBtn">P</div>
-    <div class="logo">Spotlight Picks</div>
+  <div style="display:flex; align-items:center;">
+    <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
+    <div class="profile-icon" id="profileBtn">P</div>
   </div>
-  <input id="searchInput" class="search-input" placeholder="Search products...">
 </div>
 
-<div class="container wrap" id="productContainer"></div>
-
-<div class="bottom-nav" id="bottomNav">
-  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
-  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+<div class="container" id="productContainer">
+  <!-- Product details will be rendered here -->
 </div>
 
-<script src="app.js"></script>
 <script>
-function getQueryParam(param){ return new URLSearchParams(window.location.search).get(param) }
-document.addEventListener('DOMContentLoaded', async ()=>{
-  updateProfileButtons('topProfileBtn','bottomProfileBtn');
-  const id = getQueryParam('id'); if(!id) return;
-  const products = await getAllProducts();
-  const product = products.find(p=>p.id===id); if(!product) return;
+// Utility functions
+function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
+function updateProfileButton(){ 
+  const user = localStorage.getItem('userName');
+  const btn = document.getElementById('profileBtn');
+  btn.onclick = ()=> location.href = user ? 'profile.html':'signin.html';
+}
+
+// Render product based on URL query id
+function renderProduct(){
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if(!id) return;
+
+  const products = loadProducts();
+  const p = products.find(prod=>prod.id===id);
+  if(!p) return document.getElementById('productContainer').innerHTML='Product not found';
 
   const container = document.getElementById('productContainer');
-  container.innerHTML = `
-    <div class="viewer">
-      <img src="${product.images[0]||'https://via.placeholder.com/600'}" alt="${product.name}">
-      <h2>${product.name}</h2>
-      <div class="price">${product.price||''}</div>
-      <a class="btn-small" href="${product.link||'#'}" target="_blank" style="margin-top:8px">Buy Now</a>
-      <p style="margin-top:8px">${product.description||''}</p>
-    </div>
+  container.innerHTML=`
+    <img class="product-img" src="${p.images[0]||'https://via.placeholder.com/300'}" alt="${p.name}">
+    <div class="product-name">${p.name}</div>
+    <div class="product-price">${p.price||''}</div>
+    <div class="product-description">${p.description||'No description available.'}</div>
+    <a class="buy-btn" href="${p.link||'#'}" target="_blank">Buy Now</a>
     <div class="reviews">
-      <h3>Reviews:</h3>
-      <ul>${(product.reviews||[]).map(r=>`<li>${r}</li>`).join('')||'<li>No reviews yet.</li>'}</ul>
-    </div>`;
-  
-  setupSearch();
+      <h3>Reviews</h3>
+      ${p.reviews && p.reviews.length>0 ? p.reviews.map(r=>`<div class="review">${r}</div>`).join('') : '<div class="review">No reviews yet.</div>'}
+    </div>
+  `;
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  updateProfileButton();
+  renderProduct();
 });
 </script>
+
 </body>
 </html>
