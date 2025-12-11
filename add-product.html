@@ -1,3 +1,110 @@
-// Redirect to homepage and highlight newly added product
-localStorage.setItem('products', JSON.stringify(products));
-window.location.href = 'index.html?newProduct=' + newProduct.id;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Add Product - Spotlight Picks</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+body { margin:0; font-family:'Segoe UI',sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; }
+.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
+.container { max-width:500px; margin:40px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); animation:fadeIn 0.6s ease-out; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+
+input, textarea { width:100%; padding:10px; margin-top:6px; margin-bottom:14px; border-radius:12px; border:1px solid #ccc; background:rgba(255,230,240,0.5); transition:0.3s; }
+input:focus, textarea:focus { outline:none; background:rgba(255,230,240,0.8); }
+.btn { padding:12px 20px; border:none; border-radius:12px; background:#ff4a9e; color:white; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; }
+.btn:hover { background:#ff1f78; }
+.auto-status { font-size:0.9em; color:gray; margin-bottom:10px; text-align:center; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
+</div>
+
+<div class="container">
+  <h2 style="text-align:center; margin-bottom:20px;">Add a New Product</h2>
+
+  <label>Product Link (optional)</label>
+  <input type="url" id="productLink" placeholder="https://...">
+  <div class="auto-status" id="autoStatus">Leave blank to enter manually</div>
+
+  <form id="addProductForm">
+    <label>Product Name</label>
+    <input type="text" id="name" required>
+
+    <label>Category (hoodies, shirts, pants)</label>
+    <input type="text" id="category" required>
+
+    <label>Price</label>
+    <input type="text" id="price">
+
+    <label>Image URL</label>
+    <input type="text" id="image">
+
+    <label>Description</label>
+    <textarea id="description"></textarea>
+
+    <button type="submit" class="btn">Add Product</button>
+  </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+
+  const linkInput = document.getElementById('productLink');
+  const status = document.getElementById('autoStatus');
+
+  // Try to auto-fill product info from link
+  linkInput.addEventListener('change', async ()=>{
+    const url = linkInput.value.trim();
+    if(!url) return;
+    status.textContent = 'Fetching product info...';
+    try {
+      const res = await fetch(`https://api.linkpreview.net/?key=YOUR_API_KEY&q=${encodeURIComponent(url)}`);
+      const data = await res.json();
+      if(data.title) document.getElementById('name').value = data.title;
+      if(data.description) document.getElementById('description').value = data.description;
+      if(data.image) document.getElementById('image').value = data.image;
+      status.textContent = 'Auto-fill successful! Edit fields if needed.';
+    } catch(e){
+      console.log(e);
+      status.textContent = 'Auto-fill failed. Enter details manually.';
+    }
+  });
+
+  // Add product and redirect to homepage with highlight animation
+  const form = document.getElementById('addProductForm');
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const newProduct = {
+      id:'p_'+Date.now(),
+      name:document.getElementById('name').value,
+      category:document.getElementById('category').value,
+      price:document.getElementById('price').value,
+      images:[document.getElementById('image').value],
+      link:linkInput.value || '#',
+      description:document.getElementById('description').value,
+      reviews:[]
+    };
+
+    const products = JSON.parse(localStorage.getItem('products')||'[]');
+    products.push(newProduct);
+    localStorage.setItem('products', JSON.stringify(products));
+
+    // Animate success feedback
+    status.textContent = 'Product added successfully!';
+    status.style.color = '#ff4a9e';
+    setTimeout(()=> window.location.href = 'index.html?newProduct=' + newProduct.id, 800);
+  });
+
+});
+</script>
+
+</body>
+</html>
