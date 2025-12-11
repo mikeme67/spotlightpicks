@@ -1,147 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Spotlight Picks</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin:0; padding:0; }
-body { font-family:'Inter',sans-serif; background:#ffc0cb; overflow-x:hidden; padding-bottom:70px; }
-header { display:flex; align-items:center; justify-content:space-between; padding:15px 20px; position:sticky; top:0; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); z-index:50; border-bottom:1px solid rgba(0,0,0,0.1);}
-header h1 { font-size:24px; font-weight:700; color:#111; text-shadow:0 1px 3px rgba(0,0,0,0.3);}
-.profile-icon { width:40px; height:40px; border-radius:50%; background:#00bfff; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:20px; cursor:pointer; transition:0.2s; }
-.profile-icon:hover { background:#0099cc; }
-.search-bar { text-align:right; }
-.search-bar input { padding:6px 10px; border-radius:20px; border:1px solid #ccc; width:150px; max-width:70vw; background:rgba(255,255,255,0.4); backdrop-filter:blur(8px); }
-
-section { margin:20px 10px; }
-.section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.section-title { font-size:20px; font-weight:700; }
-.product-row { display:flex; overflow-x:auto; gap:15px; padding-bottom:15px; scroll-behavior:smooth; }
-.product-card { flex:0 0 auto; background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); padding:15px; min-width:140px; transition:transform 0.2s, box-shadow 0.2s; text-align:center;}
-.product-card img { width:100%; border-radius:10px; margin-bottom:10px; }
-.product-card h2 { font-size:16px; margin-bottom:5px; }
-.product-card p { font-size:14px; color:#555; margin-bottom:10px; }
-.buy-link { display:inline-block; padding:6px 12px; background:#00bfff; color:white; border-radius:6px; text-decoration:none; font-weight:500; font-size:14px; }
-.buy-link:hover { background:#0099cc; }
-.favorite-btn { position:absolute; top:10px; right:10px; background:white; border:none; border-radius:50%; width:28px; height:28px; font-size:14px; cursor:pointer; transition:0.2s; }
-.favorite-btn.active { color:red; }
-.cta-btn { display:inline-block; padding:8px 16px; background:#00bfff; color:white; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; transition:0.2s; }
-.cta-btn:hover { background:#0099cc; }
-
-.bottom-nav {
-  position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; padding:12px 0; z-index:100;
-  border-top-left-radius:16px; border-top-right-radius:16px; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 -4px 15px rgba(0,0,0,0.2);}
-.bottom-nav button { background:rgba(255,255,255,0.1); border:none; color:white; font-size:16px; font-weight:500; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:8px 12px; border-radius:12px; transition:background 0.3s,color 0.3s;}
-.bottom-nav button i { font-size:20px; margin-bottom:4px; }
-.bottom-nav button.active { background:rgba(255,255,255,0.3); color:#00bfff; }
-
-@media(max-width:600px){ .bottom-nav button{font-size:14px;} .bottom-nav button i{font-size:18px;} .product-card{min-width:120px;} .search-bar input{width:120px;}}
-</style>
+<link rel="stylesheet" href="style.css">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
-<header>
-  <div class="profile-icon" id="topProfileBtn">P</div>
-  <h1>Spotlight Picks</h1>
-  <div class="search-bar"><input type="text" id="searchInput" placeholder="Search..."></div>
-</header>
-
-<section>
-  <div class="section-header"><div class="section-title">Hoodies</div></div>
-  <div class="product-row" id="hoodies">
-    <div class="product-card">
-      <button class="favorite-btn" onclick="toggleFavorite(this)">♡</button>
-      <img src="https://via.placeholder.com/140" alt="Hoodie 1">
-      <h2>Hoodie 1</h2>
-      <p>Cozy hoodie</p>
-      <a href="#" class="buy-link">Buy</a>
-    </div>
-    <div class="product-card">
-      <button class="favorite-btn" onclick="toggleFavorite(this)">♡</button>
-      <img src="https://via.placeholder.com/140" alt="Hoodie 2">
-      <h2>Hoodie 2</h2>
-      <p>Warm & comfy</p>
-      <a href="#" class="buy-link">Buy</a>
-    </div>
+<div class="header">
+  <div class="brand-left">
+    <div class="profile-icon" id="topProfileBtn">P</div>
+    <div class="logo">Spotlight Picks</div>
   </div>
-</section>
-
-<section>
-  <div class="section-header"><div class="section-title">Shirts</div></div>
-  <div class="product-row" id="shirts">
-    <div class="product-card">
-      <button class="favorite-btn" onclick="toggleFavorite(this)">♡</button>
-      <img src="https://via.placeholder.com/140" alt="Shirt 1">
-      <h2>Shirt 1</h2>
-      <p>Classic t-shirt</p>
-      <a href="#" class="buy-link">Buy</a>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="section-header"><div class="section-title">Pants / Sweats</div></div>
-  <div class="product-row" id="pants">
-    <div class="product-card">
-      <button class="favorite-btn" onclick="toggleFavorite(this)">♡</button>
-      <img src="https://via.placeholder.com/140" alt="Pants 1">
-      <h2>Pants 1</h2>
-      <p>Comfy sweats</p>
-      <a href="#" class="buy-link">Buy</a>
-    </div>
-  </div>
-</section>
-
-<!-- Bottom Navigation -->
-<div class="bottom-nav">
-  <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i>Home</button>
-  <button onclick="window.location.href='activity.html'"><i class="fas fa-list"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user"></i>Profile</button>
+  <input id="searchInput" class="search-input" placeholder="Search products...">
+  <a class="cta" href="add-product.html">Get Started</a>
 </div>
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<div class="container">
+  <div class="hero">
+    <h2>Curated picks — styled like an app</h2>
+    <p>Hoodies, shirts, pants — discover and save products with reviews and clean product pages.</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>Hoodies</span></div>
+    <div id="hoodies" class="row"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>Shirts</span></div>
+    <div id="shirts" class="row"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>Pants / Sweats</span></div>
+    <div id="pants" class="row"></div>
+  </div>
+
+  <div style="height:80px"></div>
+  <div class="footer" style="text-align:center;color:var(--muted);padding:20px 0">© 2025 Spotlight Picks</div>
+</div>
+
+<div class="bottom-nav" id="bottomNav">
+  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
+  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+</div>
+
+<script src="app.js"></script>
 <script>
-// Top Profile Icon
-const topProfileBtn = document.getElementById('topProfileBtn');
-topProfileBtn.onclick = () => {
-  const user = localStorage.getItem('userName');
-  if(user){ window.location.href='profile.html'; }
-  else{ window.location.href='signin.html'; }
-};
-
-// Bottom profile button
-const bottomProfileBtn = document.getElementById('bottomProfileBtn');
-function updateProfile(){
-  const user = localStorage.getItem('userName');
-  if(user){ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>${user}`; bottomProfileBtn.onclick=()=>window.location.href='profile.html'; }
-  else{ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>Profile`; bottomProfileBtn.onclick=()=>window.location.href='signin.html'; }
-}
-updateProfile();
-
-// Highlight active bottom nav
-const navButtons = document.querySelectorAll('.bottom-nav button');
-const currentPage = window.location.pathname.split("/").pop();
-navButtons.forEach(btn=>{
-  const href = btn.onclick?.toString().match(/'(.*?)'/)?.[1];
-  if(href && href===currentPage) btn.classList.add('active');
-});
-
-// Favorite toggle
-function toggleFavorite(btn){ btn.classList.toggle('active'); btn.innerText=btn.classList.contains('active')?'❤️':'♡'; }
-
-// Search
-const searchInput = document.getElementById('searchInput');
-searchInput.addEventListener('input',()=>{
-  const query = searchInput.value.toLowerCase();
-  const products = document.querySelectorAll('.product-card');
-  products.forEach(p=>{
-    const name = p.querySelector('h2').textContent.toLowerCase();
-    p.style.display = name.includes(query)?'block':'none';
+document.addEventListener('DOMContentLoaded', async ()=>{
+  updateProfileButtons('topProfileBtn','bottomProfileBtn');
+  await renderHomepageProducts();
+  setupSearch();
+  document.querySelectorAll('.bottom-nav button').forEach(btn=>{
+    const href = btn.onclick?.toString().match(/'(.*?)'/)?.[1];
+    if(href && href==='index.html') btn.classList.add('active');
   });
 });
 </script>
-
 </body>
 </html>
