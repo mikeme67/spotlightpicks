@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Add Product - Spotlight Picks</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+  <div class="brand-left">
+    <div class="profile-icon" id="topProfileBtn">P</div>
+    <div class="logo">Spotlight Picks</div>
+  </div>
+</div>
+
+<div class="container wrap">
+  <h2>Add a New Product</h2>
+  <form id="addProductForm">
+    <label>Product Name</label><br>
+    <input type="text" id="name" required><br><br>
+    
+    <label>Category (hoodies, shirts, pants)</label><br>
+    <input type="text" id="category" required><br><br>
+    
+    <label>Price</label><br>
+    <input type="text" id="price"><br><br>
+    
+    <label>Image URL</label><br>
+    <input type="text" id="image"><br><br>
+    
+    <label>Product Link</label><br>
+    <input type="text" id="link"><br><br>
+    
+    <label>Description</label><br>
+    <textarea id="description"></textarea><br><br>
+    
+    <button type="submit" class="btn-small">Add Product</button>
+  </form>
+</div>
+
+<div class="bottom-nav">
+  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
+  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+</div>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  updateProfileButtons('topProfileBtn','bottomProfileBtn');
+
+  const form = document.getElementById('addProductForm');
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const newProduct={
+      id:'p_'+Date.now(),
+      name:document.getElementById('name').value,
+      category:document.getElementById('category').value,
+      price:document.getElementById('price').value,
+      images:[document.getElementById('image').value],
+      link:document.getElementById('link').value,
+      description:document.getElementById('description').value,
+      reviews:[]
+    };
+    const products = loadLocalProducts();
+    products.push(newProduct);
+    saveLocalProducts(products);
+    alert('Product added!');
+    form.reset();
+  });
+});
+</script>
+</body>
+</html>
