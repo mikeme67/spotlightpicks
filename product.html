@@ -1,81 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product - Spotlight Picks</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Add Product - Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <style>
-body { margin:0; font-family:'Segoe UI', sans-serif; background:#ffe0f0; color:#333; }
-.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+body { margin:0; font-family:'Segoe UI',sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); box-shadow:0 2px 8px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; }
 .logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; cursor:pointer; }
-.profile-icon { width:36px; height:36px; background:#ff4a9e; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; margin-left:10px; }
-
-.container { max-width:700px; margin:20px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 6px 20px rgba(0,0,0,0.1); }
-.product-img { width:100%; border-radius:16px; margin-bottom:16px; }
-.product-name { font-size:1.6em; font-weight:bold; margin-bottom:6px; }
-.product-price { font-size:1.3em; color:#ff4a9e; font-weight:bold; margin-bottom:10px; }
-.product-description { margin-bottom:16px; line-height:1.4; }
-.buy-btn { display:inline-block; background:#ff4a9e; color:white; padding:12px 24px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; transition:0.2s; text-decoration:none; }
-.buy-btn:hover { background:#ff5a8c; }
-.reviews { margin-top:20px; }
-.review { background:#ffe6f0; padding:10px; border-radius:12px; margin-bottom:10px; }
-.reviews h3 { margin-bottom:10px; }
-@media(max-width:600px){ .container { margin:10px; padding:16px; } }
+.container { max-width:500px; margin:40px auto; background:white; border-radius:16px; padding:20px; box-shadow:0 8px 20px rgba(0,0,0,0.1); animation:fadeIn 0.6s ease-out; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+input, textarea { width:100%; padding:10px; margin-top:6px; margin-bottom:14px; border-radius:12px; border:1px solid #ccc; background:rgba(255,230,240,0.5); transition:0.3s; }
+input:focus, textarea:focus { outline:none; background:rgba(255,230,240,0.8); }
+.btn { padding:12px 20px; border:none; border-radius:12px; background:#ff4a9e; color:white; font-weight:bold; cursor:pointer; transition:0.2s; width:100%; }
+.btn:hover { background:#ff1f78; }
+.auto-status { font-size:0.9em; color:gray; margin-bottom:10px; text-align:center; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div style="display:flex; align-items:center;">
-    <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
-    <div class="profile-icon" id="profileBtn">P</div>
-  </div>
+  <div class="logo" onclick="location.href='index.html'">Spotlight Picks</div>
 </div>
 
-<div class="container" id="productContainer">
-  <!-- Product details will be rendered here -->
+<div class="container">
+  <h2 style="text-align:center; margin-bottom:20px;">Add a New Product</h2>
+
+  <label>Product Link (optional)</label>
+  <input type="url" id="productLink" placeholder="https://...">
+  <div class="auto-status" id="autoStatus">Leave blank to enter manually</div>
+
+  <form id="addProductForm">
+    <label>Product Name</label>
+    <input type="text" id="name" required>
+
+    <label>Category (hoodies, shirts, pants)</label>
+    <input type="text" id="category" required>
+
+    <label>Price</label>
+    <input type="text" id="price">
+
+    <label>Image URL</label>
+    <input type="text" id="image">
+
+    <label>Description</label>
+    <textarea id="description"></textarea>
+
+    <button type="submit" class="btn">Add Product</button>
+  </form>
 </div>
 
 <script>
-// Utility functions
-function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
-function updateProfileButton(){ 
-  const user = localStorage.getItem('userName');
-  const btn = document.getElementById('profileBtn');
-  btn.onclick = ()=> location.href = user ? 'profile.html':'signin.html';
-}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const linkInput = document.getElementById('productLink');
+  const status = document.getElementById('autoStatus');
 
-// Render product based on URL query id
-function renderProduct(){
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if(!id) return;
+  linkInput.addEventListener('change', async ()=>{
+    const url = linkInput.value.trim();
+    if(!url) return;
+    status.textContent = 'Fetching product info...';
+    try {
+      const res = await fetch(`https://api.linkpreview.net/?key=YOUR_API_KEY&q=${encodeURIComponent(url)}`);
+      const data = await res.json();
+      if(data.title) document.getElementById('name').value = data.title;
+      if(data.description) document.getElementById('description').value = data.description;
+      if(data.image) document.getElementById('image').value = data.image;
+      status.textContent = 'Auto-fill successful! Edit fields if needed.';
+    } catch(e){
+      console.log(e);
+      status.textContent = 'Auto-fill failed. Enter details manually.';
+    }
+  });
 
-  const products = loadProducts();
-  const p = products.find(prod=>prod.id===id);
-  if(!p) return document.getElementById('productContainer').innerHTML='Product not found';
+  const form = document.getElementById('addProductForm');
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const newProduct = {
+      id:'p_'+Date.now(),
+      name:document.getElementById('name').value,
+      category:document.getElementById('category').value,
+      price:document.getElementById('price').value,
+      images:[document.getElementById('image').value],
+      link:linkInput.value || '#',
+      description:document.getElementById('description').value,
+      reviews:[]
+    };
 
-  const container = document.getElementById('productContainer');
-  container.innerHTML=`
-    <img class="product-img" src="${p.images[0]||'https://via.placeholder.com/300'}" alt="${p.name}">
-    <div class="product-name">${p.name}</div>
-    <div class="product-price">${p.price||''}</div>
-    <div class="product-description">${p.description||'No description available.'}</div>
-    <a class="buy-btn" href="${p.link||'#'}" target="_blank">Buy Now</a>
-    <div class="reviews">
-      <h3>Reviews</h3>
-      ${p.reviews && p.reviews.length>0 ? p.reviews.map(r=>`<div class="review">${r}</div>`).join('') : '<div class="review">No reviews yet.</div>'}
-    </div>
-  `;
-}
+    const products = JSON.parse(localStorage.getItem('products')||'[]');
+    products.push(newProduct);
+    localStorage.setItem('products', JSON.stringify(products));
 
-document.addEventListener('DOMContentLoaded',()=>{
-  updateProfileButton();
-  renderProduct();
+    status.textContent = 'Product added successfully!';
+    status.style.color = '#ff4a9e';
+    setTimeout(()=> window.location.href = 'index.html?newProduct=' + newProduct.id, 800);
+  });
 });
 </script>
-
 </body>
 </html>
