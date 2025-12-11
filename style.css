@@ -1,6 +1,4 @@
-/* ==============================
-   Reset and Base Styles
-   ============================== */
+/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -9,16 +7,14 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa; /* light gray background */
-    color: #333; /* dark text color */
+    background-color: #f8f9fa;
+    color: #333;
     line-height: 1.6;
 }
 
-/* ==============================
-   Header
-   ============================== */
+/* Header */
 header {
-    background-color: #007bff; /* blue header */
+    background-color: #007bff;
     color: white;
     padding: 40px 20px;
     text-align: center;
@@ -33,9 +29,7 @@ header p {
     font-size: 1.2rem;
 }
 
-/* ==============================
-   Main Content
-   ============================== */
+/* Main Content */
 main {
     padding: 30px 20px;
     max-width: 900px;
@@ -55,21 +49,16 @@ section h2 {
     color: #007bff;
 }
 
-/* ==============================
-   Footer
-   ============================== */
+/* Footer */
 footer {
-    background-color: #343a40; /* dark gray footer */
+    background-color: #343a40;
     color: white;
     text-align: center;
     padding: 20px;
     font-size: 0.9rem;
-    margin-top: 40px;
 }
 
-/* ==============================
-   Links
-   ============================== */
+/* Links */
 a {
     color: #007bff;
     text-decoration: none;
@@ -79,9 +68,7 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ==============================
-   Responsive
-   ============================== */
+/* Responsive */
 @media (max-width: 600px) {
     header h1 {
         font-size: 2rem;
