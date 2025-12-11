@@ -1,0 +1,24 @@
+{
+  "products": [
+    {
+      "id": "p_001",
+      "name": "Example Hoodie",
+      "category": "hoodies",
+      "price": "$39.99",
+      "images": ["https://via.placeholder.com/600x600?text=Hoodie+1","https://via.placeholder.com/600x600?text=Hoodie+1+alt"],
+      "link": "https://example.com/hoodie",
+      "description": "A cozy hoodie for everyday wear.",
+      "reviews": ["Great fit!", "Very warm"]
+    },
+    {
+      "id": "p_002",
+      "name": "Classic T-Shirt",
+      "category": "shirts",
+      "price": "$19.99",
+      "images": ["https://via.placeholder.com/600x600?text=Shirt+1"],
+      "link": "https://example.com/shirt",
+      "description": "Soft cotton tee.",
+      "reviews": []
+    }
+  ]
+}
