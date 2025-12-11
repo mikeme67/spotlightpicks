@@ -1,64 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Spotlight Picks</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<style>
+body { margin:0; font-family: 'Segoe UI', sans-serif; background:#ffe0f0; color:#333; }
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.8); backdrop-filter:blur(10px); z-index:100; }
+.logo { font-size:1.8em; font-weight:bold; color:#ff4a9e; }
+.search-input { padding:6px 10px; border-radius:8px; border:1px solid #ccc; background:rgba(255,255,255,0.7); width:150px; transition:0.2s; }
+.search-input:focus { outline:none; width:250px; background:rgba(255,255,255,0.9); }
+.profile-icon { width:36px; height:36px; background:#ff4a9e; border-radius:50%; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; margin-right:10px; }
+
+.category-section { margin:20px; }
+.category-title { font-size:1.4em; font-weight:bold; margin-bottom:10px; }
+.products-row { display:flex; overflow-x:auto; gap:12px; padding-bottom:10px; scroll-behavior:smooth; }
+.products-row::-webkit-scrollbar { height:6px; }
+.products-row::-webkit-scrollbar-thumb { background:#ff4a9e; border-radius:3px; }
+
+.product-card { min-width:160px; background:white; border-radius:12px; padding:8px; box-shadow:0 4px 12px rgba(0,0,0,0.1); transition:0.3s; cursor:pointer; flex-shrink:0; }
+.product-card:hover { transform:translateY(-6px); box-shadow:0 8px 20px rgba(0,0,0,0.2); }
+.product-card img { width:100%; border-radius:8px; }
+.product-name { font-weight:bold; margin-top:6px; font-size:1em; }
+.product-price { color:#ff4a9e; font-weight:bold; margin-top:4px; }
+
+.bottom-nav { position:fixed; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:30px; background:rgba(255,255,255,0.6); backdrop-filter:blur(10px); padding:10px 30px; border-radius:30px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
+.bottom-nav button { background:none; border:none; display:flex; flex-direction:column; align-items:center; font-size:0.85em; color:#333; cursor:pointer; transition:0.2s; }
+.bottom-nav button.active { color:#ff4a9e; }
+.bottom-nav i { font-size:1.2em; margin-bottom:4px; }
+@media(max-width:600px){ .products-row { gap:8px; } .product-card { min-width:140px; } }
+</style>
 </head>
 <body>
+
 <div class="header">
-  <div class="brand-left">
+  <div style="display:flex; align-items:center;">
     <div class="profile-icon" id="topProfileBtn">P</div>
     <div class="logo">Spotlight Picks</div>
   </div>
   <input id="searchInput" class="search-input" placeholder="Search products...">
-  <a class="cta" href="add-product.html">Get Started</a>
 </div>
 
-<div class="container">
-  <div class="hero">
-    <h2>Curated picks — styled like an app</h2>
-    <p>Hoodies, shirts, pants — discover and save products with reviews and clean product pages.</p>
-  </div>
+<div id="categoriesContainer"></div>
 
-  <div class="section">
-    <div class="section-title"><span>Hoodies</span></div>
-    <div id="hoodies" class="row"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-title"><span>Shirts</span></div>
-    <div id="shirts" class="row"></div>
-  </div>
-
-  <div class="section">
-    <div class="section-title"><span>Pants / Sweats</span></div>
-    <div id="pants" class="row"></div>
-  </div>
-
-  <div style="height:80px"></div>
-  <div class="footer" style="text-align:center;color:var(--muted);padding:20px 0">© 2025 Spotlight Picks</div>
-</div>
-
-<div class="bottom-nav" id="bottomNav">
-  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
-  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+<div class="bottom-nav">
+  <button id="homeBtn" class="active" onclick="location.href='index.html'"><i class="fas fa-home"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list"></i>Activity</button>
+  <button id="bottomProfileBtn" onclick="location.href='profile.html'"><i class="fas fa-user"></i>Profile</button>
 </div>
 
 <script src="app.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', async ()=>{
+// Utility functions for products
+function loadProducts(){ return JSON.parse(localStorage.getItem('products')||'[]'); }
+function updateProfileButtons(topId,bottomId){
+  const user = localStorage.getItem('userName');
+  [topId,bottomId].forEach(id=>{
+    const btn=document.getElementById(id);
+    if(btn) btn.onclick = ()=>location.href = user?'profile.html':'signin.html';
+  });
+}
+
+// Render products by category
+function renderCategories(filter=''){
+  const products = loadProducts();
+  const categories = ['hoodies','shirts','pants'];
+  const container = document.getElementById('categoriesContainer');
+  container.innerHTML='';
+
+  categories.forEach(cat=>{
+    const filtered = products.filter(p=>p.category===cat && p.name.toLowerCase().includes(filter.toLowerCase()));
+    if(filtered.length===0) return;
+    const section = document.createElement('div'); section.className='category-section';
+    section.innerHTML=`<div class="category-title">${cat.charAt(0).toUpperCase()+cat.slice(1)}</div>`;
+    const row = document.createElement('div'); row.className='products-row';
+    filtered.forEach(p=>{
+      const card = document.createElement('div'); card.className='product-card';
+      card.innerHTML=`<img src="${p.images[0]||'https://via.placeholder.com/150'}" alt="${p.name}">
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">${p.price||''}</div>`;
+      card.onclick=()=>location.href=`product.html?id=${p.id}`;
+      row.appendChild(card);
+    });
+    section.appendChild(row); container.appendChild(section);
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
   updateProfileButtons('topProfileBtn','bottomProfileBtn');
-  await renderHomepageProducts();
-  setupSearch();
-  document.querySelectorAll('.bottom-nav button').forEach(btn=>{
-    const href = btn.onclick?.toString().match(/'(.*?)'/)?.[1];
-    if(href && href==='index.html') btn.classList.add('active');
+  renderCategories();
+
+  document.getElementById('searchInput').addEventListener('input',(e)=>{
+    renderCategories(e.target.value);
   });
 });
 </script>
+
 </body>
 </html>
