@@ -1,77 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Activity - Spotlight Picks</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-body{font-family:'Inter',sans-serif;background:#ffc0cb;margin:0;padding-top:60px;padding-bottom:70px;display:flex;flex-direction:column;align-items:center;}
-header { display:flex; align-items:center; justify-content:space-between; width:100%; padding:10px 20px; position:sticky; top:0; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px); z-index:50; border-bottom:1px solid rgba(0,0,0,0.1);}
-header h1 { font-size:20px; font-weight:700; color:#111; text-align:center; flex:1; }
-.profile-icon { width:35px; height:35px; border-radius:50%; background:#00bfff; color:white; display:flex; align-items:center; justify-content:center; font-weight:bold; cursor:pointer; transition:0.2s; }
-.profile-icon:hover { background:#0099cc; }
-
-h2{text-align:center;margin-bottom:15px;}
-ul{list-style:none;padding:0;width:90%;max-width:400px;}
-li{background:white;margin-bottom:10px;padding:12px;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1); font-size:14px; }
-
-.bottom-nav {position:fixed; bottom:0; left:0; width:100%; display:flex; justify-content:space-around; padding:12px 0; z-index:100;
-  border-top-left-radius:16px; border-top-right-radius:16px; background:rgba(255,255,255,0.2); backdrop-filter:blur(12px);}
-.bottom-nav button { background:rgba(255,255,255,0.1); border:none; color:white; font-size:16px; font-weight:500; cursor:pointer; display:flex; flex-direction:column; align-items:center; padding:6px 10px; border-radius:12px; transition:background 0.3s,color 0.3s;}
-.bottom-nav button i { font-size:18px; margin-bottom:3px; }
-.bottom-nav button.active { background:rgba(255,255,255,0.3); color:#00bfff; }
-
-@media(max-width:600px){ ul{width:95%;} .bottom-nav button{font-size:14px;} .bottom-nav button i{font-size:16px;} }
-</style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Activity - Spotlight Picks</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header>
-  <div class="profile-icon" id="topProfileBtn">P</div>
-  <h1>Spotlight Picks</h1>
-  <div style="width:35px;"></div>
-</header>
-
-<h2>Your Activity</h2>
-<ul id="activityList"></ul>
-
-<div class="bottom-nav">
-  <button onclick="window.location.href='index.html'"><i class="fas fa-home"></i>Home</button>
-  <button onclick="window.location.href='activity.html'"><i class="fas fa-list"></i>Activity</button>
-  <button id="bottomProfileBtn"><i class="fas fa-user"></i>Profile</button>
+<div class="header">
+  <div class="brand-left">
+    <div class="profile-icon" id="topProfileBtn">P</div>
+    <div class="logo">Spotlight Picks</div>
+  </div>
 </div>
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<div class="container wrap">
+  <h2>Your Activity</h2>
+  <p>Favorites and recently viewed products will appear here.</p>
+  <ul id="favoritesList"></ul>
+</div>
+
+<div class="bottom-nav">
+  <button onclick="location.href='index.html'"><i class="fas fa-home icon-sm"></i>Home</button>
+  <button onclick="location.href='activity.html'"><i class="fas fa-list icon-sm"></i>Activity</button>
+  <button id="bottomProfileBtn"><i class="fas fa-user icon-sm"></i>Profile</button>
+</div>
+
+<script src="app.js"></script>
 <script>
-const activityList = document.getElementById('activityList');
-const favs = JSON.parse(localStorage.getItem('favorites'))||[];
-if(favs.length===0){ activityList.innerHTML='<li>No activity yet</li>'; }
-else{ favs.forEach(f=>{ activityList.innerHTML+=`<li>${f}</li>`; }); }
-
-// Top profile icon
-const topProfileBtn = document.getElementById('topProfileBtn');
-topProfileBtn.onclick = () => {
-  const user = localStorage.getItem('userName');
-  if(user){ window.location.href='profile.html'; }
-  else{ window.location.href='signin.html'; }
-};
-
-// Bottom profile button
-const bottomProfileBtn = document.getElementById('bottomProfileBtn');
-function updateProfile(){
-  const user = localStorage.getItem('userName');
-  if(user){ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>${user}`; bottomProfileBtn.onclick=()=>window.location.href='profile.html'; }
-  else{ bottomProfileBtn.innerHTML=`<i class="fas fa-user"></i>Profile`; bottomProfileBtn.onclick=()=>window.location.href='signin.html'; }
-}
-updateProfile();
-
-// Highlight active nav
-const navButtons = document.querySelectorAll('.bottom-nav button');
-const currentPage = window.location.pathname.split("/").pop();
-navButtons.forEach(btn=>{
-  const href = btn.onclick?.toString().match(/'(.*?)'/)?.[1];
-  if(href && href===currentPage) btn.classList.add('active');
+document.addEventListener('DOMContentLoaded', async ()=>{
+  updateProfileButtons('topProfileBtn','bottomProfileBtn');
+  const favs = JSON.parse(localStorage.getItem('favorites')||'[]');
+  const ul = document.getElementById('favoritesList');
+  if(favs.length===0) ul.innerHTML='<li>No favorites yet</li>';
+  else ul.innerHTML = favs.map(f=>`<li>${f}</li>`).join('');
 });
 </script>
 </body>
